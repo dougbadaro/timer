@@ -1,7 +1,11 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
+import { Unica_One as UnicaOne } from 'next/font/google'
 
-const inter = Inter({ subsets: ['latin'] })
+const unicaOne = UnicaOne({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-unica-one',
+})
 
 export const metadata = {
   title: 'Create Next App',
@@ -15,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="h-screen">{children}</body>
-    </html>
+      <body className={`${unicaOne.variable} h-screen`}>{children}</body>
+    </html >
   )
 }
