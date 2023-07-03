@@ -1,13 +1,12 @@
 'use client'
 
-import { cookies } from 'next/headers'
 import { DateTime, Duration } from "luxon";
 import { FormEvent, useEffect, useState } from "react";
 
 export default function Home() {
   const [inputValue, setInputValue] = useState('');
-  const [timer, setTimer] = useState(`${DateTime.now().toFormat('HH:mm:ss')}`);
-  const [endTime, setEndTime] = useState(DateTime.now)
+  const [timer, setTimer] = useState("--:--:--");
+  const [endTime, setEndTime]: any = useState('')
 
   const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -24,31 +23,32 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      let timeLeft = Duration.fromObject({ milliseconds: 0 })
-      if (endTime.hasSame(DateTime.now(), 'day')) {
-        timeLeft = endTime.diffNow()
-      } else {
-        const firstDay = DateTime.fromObject({ day: DateTime.now().day, hour: 23, minute: 59, second: 59 }).diffNow()
-        const secondDay = endTime.diff(DateTime.fromObject({ day: endTime.day, hour: 0, minute: 0, second: 0 }))
+    if (endTime !== '') {
+      const interval = setInterval(() => {
+        let timeLeft = Duration.fromObject({ milliseconds: 0 })
+        if (endTime.hasSame(DateTime.now(), 'day')) {
+          timeLeft = endTime.diffNow()
+        } else {
+          const firstDay = DateTime.fromObject({ day: DateTime.now().day, hour: 23, minute: 59, second: 59 }).diffNow()
+          const secondDay = endTime.diff(DateTime.fromObject({ day: endTime.day, hour: 0, minute: 0, second: 0 }))
 
-        timeLeft = Duration.fromMillis(firstDay.milliseconds + secondDay.milliseconds)
-        console.log(timeLeft)
-      }
+          timeLeft = Duration.fromMillis(firstDay.milliseconds + secondDay.milliseconds + 1000)
+        }
 
-      const hours = Math.floor(timeLeft.as('hours'))
-      const minutes = Math.floor(timeLeft.as('minutes')) % 60
-      const seconds = Math.floor(timeLeft.as('seconds')) % 60 + 1
+        const hours = Math.floor(timeLeft.as('hours'))
+        const minutes = Math.floor(timeLeft.as('minutes')) % 60
+        const seconds = Math.floor(timeLeft.as('seconds')) % 60
 
-      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+        const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 
-      setTimer(formattedTime);
-    }, 1)
+        setTimer(formattedTime);
+      }, 1)
 
-    return () => {
-      clearInterval(interval);
-    };
-  })
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [endTime])
 
   return (
     <div className='h-full items-center flex flex-col justify-center gap-10'>
